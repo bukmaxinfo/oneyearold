@@ -10,10 +10,13 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Google Sheets auth (created once, reused)
-const auth = new google.auth.GoogleAuth({
-  keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS || 'credentials.json',
-  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-});
+const authOptions = { scopes: ['https://www.googleapis.com/auth/spreadsheets'] };
+if (process.env.GOOGLE_CREDENTIALS) {
+  authOptions.credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+} else {
+  authOptions.keyFile = process.env.GOOGLE_APPLICATION_CREDENTIALS || 'credentials.json';
+}
+const auth = new google.auth.GoogleAuth(authOptions);
 const sheets = google.sheets({ version: 'v4', auth });
 
 app.post('/api/rsvp', async (req, res) => {
@@ -40,6 +43,11 @@ app.post('/api/rsvp', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+// Local dev
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
