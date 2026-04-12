@@ -177,28 +177,19 @@
     }
 
     /* ---- Countdown ---- */
-    .countdown-strip {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .countdown-strip .cd-item {
+    .countdown-box {
       background: white;
-      border-radius: 12px;
-      padding: 8px 0;
-      flex: 1;
+      border-radius: 14px;
+      padding: 10px 16px;
       text-align: center;
       box-shadow: 0 2px 10px rgba(0,0,0,0.04);
     }
 
-    .cd-item .number {
+    .cd-text {
       font-family: 'Bubblegum Sans', cursive;
-      font-size: 1.6rem; color: #e88fa0; display: block;
-    }
-    .cd-item .label {
-      font-family: 'Patrick Hand', cursive;
-      font-size: 0.8rem; color: #9a8a9a;
+      font-size: 1.3rem;
+      color: #e88fa0;
+      letter-spacing: 1px;
     }
 
     /* ---- Section mini titles ---- */
@@ -424,28 +415,13 @@
         <div class="detail-card">
           <span class="icon">&#128205;</span>
           <h3>Where</h3>
-          <p><strong>TBD</strong><br>Address coming soon!</p>
+          <p><strong>Rose Garden</strong><br>1649 Naglee Ave<br>San Jose, CA 95126</p>
         </div>
       </div>
 
       <!-- Countdown -->
-      <div class="countdown-strip">
-        <div class="cd-item">
-          <span class="number" id="days">--</span>
-          <span class="label">Days</span>
-        </div>
-        <div class="cd-item">
-          <span class="number" id="hours">--</span>
-          <span class="label">Hours</span>
-        </div>
-        <div class="cd-item">
-          <span class="number" id="minutes">--</span>
-          <span class="label">Mins</span>
-        </div>
-        <div class="cd-item">
-          <span class="number" id="seconds">--</span>
-          <span class="label">Secs</span>
-        </div>
+      <div class="countdown-box">
+        <span class="cd-text" id="countdown-text">--d --h --m --s</span>
       </div>
 
       <!-- RSVP -->
@@ -455,8 +431,8 @@
         <form id="rsvp-form">
           <div class="form-row">
             <div class="form-group">
-              <label>Parent's Name</label>
-              <input type="text" id="parent-name" placeholder="Your name" required>
+              <label>Guest's Name</label>
+              <input type="text" id="guest-name" placeholder="Your name" required>
             </div>
             <div class="form-group">
               <label>Baby's Name</label>
@@ -559,16 +535,15 @@
 
     // --- Countdown ---
     const partyDate = new Date('2026-04-26T10:30:00');
+    const cdEl = document.getElementById('countdown-text');
     function updateCountdown() {
       const diff = partyDate - new Date();
-      if (diff <= 0) {
-        ['days','hours','minutes','seconds'].forEach(id => document.getElementById(id).textContent = '0');
-        return;
-      }
-      document.getElementById('days').textContent = Math.floor(diff / 864e5);
-      document.getElementById('hours').textContent = Math.floor((diff / 36e5) % 24);
-      document.getElementById('minutes').textContent = Math.floor((diff / 6e4) % 60);
-      document.getElementById('seconds').textContent = Math.floor((diff / 1e3) % 60);
+      if (diff <= 0) { cdEl.textContent = "It's party time!"; return; }
+      const d = Math.floor(diff / 864e5);
+      const h = Math.floor((diff / 36e5) % 24);
+      const m = Math.floor((diff / 6e4) % 60);
+      const s = Math.floor((diff / 1e3) % 60);
+      cdEl.textContent = d + 'd ' + h + 'h ' + m + 'm ' + s + 's';
     }
     updateCountdown();
     setInterval(updateCountdown, 1000);
@@ -583,7 +558,7 @@
       rsvpBtn.textContent = 'Sending...';
 
       const data = {
-        parentName: document.getElementById('parent-name').value,
+        guestName: document.getElementById('guest-name').value,
         babyName: document.getElementById('baby-name').value,
         email: document.getElementById('email').value,
         attendance: document.querySelector('input[name="attendance"]:checked')?.value,

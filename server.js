@@ -17,9 +17,9 @@ const auth = new google.auth.GoogleAuth({
 const sheets = google.sheets({ version: 'v4', auth });
 
 app.post('/api/rsvp', async (req, res) => {
-  const { parentName, babyName, email, attendance, guests, notes, timestamp } = req.body;
+  const { guestName, babyName, email, attendance, guests, notes, timestamp } = req.body;
 
-  if (!parentName || !email || !attendance) {
+  if (!guestName || !email || !attendance) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
@@ -29,7 +29,7 @@ app.post('/api/rsvp', async (req, res) => {
       range: 'Sheet1!A:G',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
-        values: [[timestamp, parentName, babyName, email, attendance, guests, notes]],
+        values: [[timestamp, guestName, babyName, email, attendance, guests, notes]],
       },
     });
 
