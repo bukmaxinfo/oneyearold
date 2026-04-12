@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a2e;
+      font-family: -apple-system, sans-serif;
+      padding: 20px;
+    }
+
+    .phone-frame {
+      position: relative;
+      width: 393px;   /* iPhone 15 width */
+      height: 852px;  /* iPhone 15 height */
+      border-radius: 50px;
+      background: #111;
+      padding: 14px;
+      box-shadow:
+        0 0 0 2px #333,
+        0 20px 60px rgba(0,0,0,0.5),
+        inset 0 0 0 2px #222;
+    }
+
+    /* Dynamic Island */
+    .phone-frame::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 34px;
+      background: #111;
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 38px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .phone-screen iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .label {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-top: 16px;
+      letter-spacing: 1px;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <iframe src="index.html"></iframe>
+      </div>
+    </div>
+    <p class="label">iPhone 15 &mdash; 393 &times; 852</p>
+  </div>
+</body>
+</html>
