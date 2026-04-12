@@ -568,8 +568,13 @@
 
     // --- RSVP ---
     const form = document.getElementById('rsvp-form');
-    form.addEventListener('submit', function(e) {
+    const rsvpBtn = form.querySelector('.btn-rsvp');
+
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
+      rsvpBtn.disabled = true;
+      rsvpBtn.textContent = 'Sending...';
+
       const data = {
         parentName: document.getElementById('parent-name').value,
         babyName: document.getElementById('baby-name').value,
@@ -579,12 +584,22 @@
         notes: document.getElementById('notes').value,
         timestamp: new Date().toISOString()
       };
-      const rsvps = JSON.parse(localStorage.getItem('birthday-rsvps') || '[]');
-      rsvps.push(data);
-      localStorage.setItem('birthday-rsvps', JSON.stringify(rsvps));
-      form.style.display = 'none';
-      document.getElementById('rsvp-success').classList.add('show');
-      confettiBurst();
+
+      try {
+        const res = await fetch('/api/rsvp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error('Server error');
+        form.style.display = 'none';
+        document.getElementById('rsvp-success').classList.add('show');
+        confettiBurst();
+      } catch (err) {
+        rsvpBtn.disabled = false;
+        rsvpBtn.textContent = 'Send RSVP \u2764';
+        alert('Oops! Something went wrong. Please try again.');
+      }
     });
 
     // --- Confetti burst ---
