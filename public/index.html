@@ -23,10 +23,18 @@
 
     body {
       font-family: 'Nunito', sans-serif;
-      background: linear-gradient(135deg, #e8f0f8 0%, var(--cream) 40%, #f0e8f4 70%, var(--cream) 100%);
+      background: linear-gradient(270deg, #e8f0f8, #fff8f0, #f0e8f4, #e8f4f0, #fff0f4);
+      background-size: 600% 600%;
+      animation: gradient-shift 20s ease infinite;
       color: var(--dark);
       overflow-x: hidden;
       min-height: 100vh;
+    }
+
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     /* ---- Confetti ---- */
@@ -44,6 +52,136 @@
     @keyframes confetti-fall {
       0% { transform: translateY(-10px) rotate(0deg); opacity: 0.6; }
       100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ---- Balloons ---- */
+    .balloon-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -120px;
+      width: 40px;
+      height: 50px;
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      animation: balloon-rise linear infinite;
+      opacity: 0.55;
+    }
+
+    .balloon::before {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 8px solid inherit;
+    }
+
+    .balloon::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      width: 1px;
+      height: 28px;
+      background: rgba(150,150,150,0.3);
+    }
+
+    @keyframes balloon-rise {
+      0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.55; }
+      90% { opacity: 0.55; }
+      100% { transform: translateY(calc(-100vh - 150px)) translateX(40px) rotate(15deg); opacity: 0; }
+    }
+
+    /* ---- Bokeh ---- */
+    .bokeh-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+
+    .bokeh {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.6), rgba(255,255,255,0.05));
+      animation: bokeh-float ease-in-out infinite;
+    }
+
+    @keyframes bokeh-float {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
+      50% { transform: translate(20px, -30px) scale(1.15); opacity: 0.45; }
+    }
+
+    /* ---- Floating Hearts ---- */
+    .hearts-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+
+    .float-heart {
+      position: absolute;
+      bottom: -40px;
+      font-size: 1.2rem;
+      animation: heart-rise linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes heart-rise {
+      0% { transform: translateY(0) translateX(0) scale(0.5) rotate(0deg); opacity: 0; }
+      15% { opacity: 0.6; }
+      85% { opacity: 0.6; }
+      100% { transform: translateY(calc(-100vh - 60px)) translateX(60px) scale(1.2) rotate(25deg); opacity: 0; }
+    }
+
+    /* ---- Twinkling Stars ---- */
+    .stars-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+
+    .twinkle-star {
+      position: absolute;
+      width: 4px; height: 4px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 6px 2px rgba(255,255,255,0.6);
+      animation: twinkle ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      50% { opacity: 0.8; transform: scale(1.5); }
+    }
+
+    /* ---- Floating Party Emoji ---- */
+    .emoji-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+
+    .float-emoji {
+      position: absolute;
+      bottom: -50px;
+      font-size: 1.5rem;
+      animation: emoji-drift linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes emoji-drift {
+      0% { transform: translateY(0) rotate(0deg) scale(0.6); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(calc(-100vh - 80px)) rotate(360deg) scale(1); opacity: 0; }
     }
 
     /* ---- Page layout ---- */
@@ -383,8 +521,13 @@
 </head>
 <body>
 
-  <!-- Confetti -->
+  <!-- Background effects -->
   <div class="confetti-container" id="confetti"></div>
+  <div class="balloon-container" id="balloons"></div>
+  <div class="bokeh-container" id="bokeh"></div>
+  <div class="hearts-container" id="hearts"></div>
+  <div class="stars-container" id="stars"></div>
+  <div class="emoji-container" id="emojis"></div>
 
   <div class="page">
 
@@ -453,7 +596,7 @@
               <input type="email" id="email" placeholder="your@email.com">
             </div>
             <div class="form-group">
-              <label>Guests</label>
+              <label>Guest Number</label>
               <select id="guests">
                 <option value="1">1</option>
                 <option value="2" selected>2</option>
@@ -528,6 +671,93 @@
         el.style.background = colors[Math.floor(Math.random() * colors.length)];
         el.style.animationDuration = (6 + Math.random() * 8) + 's';
         el.style.animationDelay = (Math.random() * 10) + 's';
+        container.appendChild(el);
+      }
+    })();
+
+    // --- Balloons ---
+    (function() {
+      const container = document.getElementById('balloons');
+      const colors = ['#f8c8d8','#b8d4e8','#fce4a8','#b8e8d4','#d4c8f0','#fdd8c8','#ffb3c6','#c8f0e8','#f0d4e8'];
+      for (let i = 0; i < 20; i++) {
+        const el = document.createElement('div');
+        el.className = 'balloon';
+        const size = 28 + Math.random() * 30;
+        el.style.width = size + 'px';
+        el.style.height = (size * 1.25) + 'px';
+        el.style.left = Math.random() * 100 + '%';
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animationDuration = (8 + Math.random() * 14) + 's';
+        el.style.animationDelay = (Math.random() * 20) + 's';
+        container.appendChild(el);
+      }
+    })();
+
+    // --- Bokeh ---
+    (function() {
+      const container = document.getElementById('bokeh');
+      const colors = ['rgba(248,200,216,0.3)','rgba(184,212,232,0.3)','rgba(252,228,168,0.25)','rgba(184,232,212,0.25)','rgba(212,200,240,0.3)','rgba(255,179,198,0.2)'];
+      for (let i = 0; i < 16; i++) {
+        const el = document.createElement('div');
+        el.className = 'bokeh';
+        const size = 50 + Math.random() * 180;
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.left = Math.random() * 100 + '%';
+        el.style.top = Math.random() * 100 + '%';
+        el.style.background = `radial-gradient(circle at 35% 35%, ${colors[Math.floor(Math.random() * colors.length)]}, transparent)`;
+        el.style.animationDuration = (6 + Math.random() * 12) + 's';
+        el.style.animationDelay = (Math.random() * 8) + 's';
+        container.appendChild(el);
+      }
+    })();
+
+    // --- Floating Hearts ---
+    (function() {
+      const container = document.getElementById('hearts');
+      const hearts = ['\u2764','\u1F49B','\u1F49C','\u1F49D','\u1F497','\u2665'];
+      for (let i = 0; i < 15; i++) {
+        const el = document.createElement('div');
+        el.className = 'float-heart';
+        el.textContent = ['❤','💛','💜','💗','💕','♥','🩷','🩵'][Math.floor(Math.random() * 8)];
+        el.style.left = Math.random() * 100 + '%';
+        el.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
+        el.style.animationDuration = (10 + Math.random() * 15) + 's';
+        el.style.animationDelay = (Math.random() * 20) + 's';
+        container.appendChild(el);
+      }
+    })();
+
+    // --- Twinkling Stars ---
+    (function() {
+      const container = document.getElementById('stars');
+      for (let i = 0; i < 30; i++) {
+        const el = document.createElement('div');
+        el.className = 'twinkle-star';
+        const size = 2 + Math.random() * 4;
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.left = Math.random() * 100 + '%';
+        el.style.top = Math.random() * 100 + '%';
+        el.style.animationDuration = (1.5 + Math.random() * 3) + 's';
+        el.style.animationDelay = (Math.random() * 5) + 's';
+        el.style.boxShadow = `0 0 ${4+Math.random()*6}px ${1+Math.random()*3}px rgba(255,220,255,0.5)`;
+        container.appendChild(el);
+      }
+    })();
+
+    // --- Floating Party Emoji ---
+    (function() {
+      const container = document.getElementById('emojis');
+      const emojis = ['🎂','🎈','🎁','🧁','🍰','⭐','🎀','🌟','🎉','🍼','🧸'];
+      for (let i = 0; i < 10; i++) {
+        const el = document.createElement('div');
+        el.className = 'float-emoji';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = Math.random() * 100 + '%';
+        el.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+        el.style.animationDuration = (12 + Math.random() * 16) + 's';
+        el.style.animationDelay = (Math.random() * 25) + 's';
         container.appendChild(el);
       }
     })();
