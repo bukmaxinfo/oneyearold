@@ -544,7 +544,10 @@
       <span class="sparkle">&#10022;</span>
       <span class="sparkle">&#10022;</span>
       <span class="sparkle">&#10022;</span>
-      <video src="oneyearposter.mp4" autoplay muted loop playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="true"></video>
+      <video id="heroVideo" src="oneyearposter.mp4" poster="oneyearposter-poster.jpg" autoplay muted loop playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="true"></video>
+      <div id="videoPlayBtn" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(0,0,0,0.15);border-radius:24px;z-index:3;display:none;">
+        <span style="font-size:4rem;">&#9654;&#65039;</span>
+      </div>
     </div>
 
     <!-- Sidebar: details + countdown + RSVP -->
@@ -660,6 +663,49 @@
   </div>
 
   <script>
+    // --- Video autoplay (WeChat fix) ---
+    (function() {
+      var video = document.getElementById('heroVideo');
+      var playBtn = document.getElementById('videoPlayBtn');
+
+      function tryPlay() {
+        var p = video.play();
+        if (p !== undefined) {
+          p.then(function() {
+            playBtn.style.display = 'none';
+          }).catch(function() {
+            // Autoplay blocked — show tap-to-play button
+            playBtn.style.display = 'flex';
+          });
+        }
+      }
+
+      // WeChat's WeixinJSBridge triggers autoplay
+      if (typeof WeixinJSBridge !== 'undefined') {
+        WeixinJSBridge.invoke('getNetworkType', {}, function() { tryPlay(); });
+      } else {
+        document.addEventListener('WeixinJSBridgeReady', function() {
+          WeixinJSBridge.invoke('getNetworkType', {}, function() { tryPlay(); });
+        }, false);
+      }
+
+      // Also try on normal page load
+      tryPlay();
+
+      // Tap-to-play fallback
+      playBtn.addEventListener('click', function() {
+        video.play();
+        playBtn.style.display = 'none';
+      });
+
+      // Also try playing on first user touch anywhere
+      document.addEventListener('touchstart', function onTouch() {
+        video.play();
+        playBtn.style.display = 'none';
+        document.removeEventListener('touchstart', onTouch);
+      }, { once: true });
+    })();
+
     // --- Confetti ---
     (function() {
       const container = document.getElementById('confetti');
